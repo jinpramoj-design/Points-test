@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function isAdmin() {
+      return get(/databases/$(db)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    match /users/{u} {
+      allow read: if request.auth != null;
+      allow create: if request.auth.uid == u && request.resource.data.points == 0 && request.resource.data.role == 'user';
+      // ผู้เล่นแก้ได้แค่ชื่อกับรูป — คะแนนแก้ผ่าน API ฝั่งเซิร์ฟเวอร์เท่านั้น
+      allow update: if request.auth.uid == u && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','photo']);
+    }
+    match /rewards/{r} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    match /transfers/{t} {
+      allow read: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid || isAdmin());
+      allow write: if false;
+    }
+  }
+}

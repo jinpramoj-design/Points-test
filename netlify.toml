@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # ค่า NEXT_PUBLIC_* ของ Firebase เป็นค่าสาธารณะที่อยู่ในโค้ดฝั่งเบราว์เซอร์อยู่แล้ว
+  # กันไม่ให้ตัวสแกน secrets ของ Netlify ทำ build ล้ม
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_FIREBASE_API_KEY,NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,NEXT_PUBLIC_FIREBASE_PROJECT_ID,NEXT_PUBLIC_FIREBASE_APP_ID"
