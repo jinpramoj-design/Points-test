@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
+import Logo from './Logo';
 export default function AuthForm({ adminOnly }) {
   const [up, setUp] = useState(false), [f, setF] = useState({ name: '', email: '', pw: '' }), [err, setErr] = useState(''), [busy, setBusy] = useState(false);
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
@@ -18,7 +19,7 @@ export default function AuthForm({ adminOnly }) {
     setBusy(false);
   }
   return (
-    <div className="wrap c"><div style={{ fontSize: 56, marginTop: 30 }}>{adminOnly ? '🛠️' : '🏆'}</div><h1>Points Arena{adminOnly && ' Admin'}</h1>
+    <div className="wrap c"><div style={{ display: 'flex', justifyContent: 'center', marginTop: 30 }}><Logo size={76} /></div><h1>Points Arena{adminOnly && ' Admin'}</h1>
       <div className="card" style={{ textAlign: 'left' }}>
         {!adminOnly && <div className="row" style={{ marginBottom: 12 }}>
           <button className={'btn g' + (up ? ' sec' : '')} onClick={() => setUp(false)}>เข้าสู่ระบบ</button>

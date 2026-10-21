@@ -8,11 +8,13 @@ import { call } from '@/lib/api';
 import { useUsers, useHist } from '@/lib/hooks';
 import { Avatar, Modal, History } from './Bits';
 import Scanner from './Scanner';
+import Logo from './Logo';
 import { useEffect } from 'react';
 
 export default function Main({ me }) {
   const [tab, setTab] = useState('lb');
   return <div className="wrap">
+    <div className="hdr"><Logo size={34} /><b>Points Arena</b></div>
     {tab === 'lb' && <Leaderboard me={me} />}{tab === 'rw' && <Rewards me={me} />}{tab === 'pf' && <Profile me={me} />}
     <nav>{[['lb', '🏆 อันดับ'], ['rw', '🎁 ของรางวัล'], ['pf', '👤 โปรไฟล์']].map(([k, t]) => <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{t}</button>)}</nav></div>;
 }
@@ -46,7 +48,7 @@ function Profile({ me }) {
   }
   async function saveEdit() { if (!name.trim()) return; await updateDoc(doc(db, 'users', me.id), { name: name.trim(), photo }); close(); }
   return <><h1>👤 โปรไฟล์</h1>
-    <div className="card c"><div style={{ display: 'flex', justifyContent: 'center' }}><Avatar u={me} s={72} /></div><h2>{me.name}</h2><div className="mut">ID: {me.id}</div>
+    <div className="card c hero"><div style={{ display: 'flex', justifyContent: 'center' }}><Avatar u={me} s={72} /></div><h2>{me.name}</h2><div className="mut">ID: {me.id}</div>
       <div className="big">{me.points.toLocaleString()}</div><div className="mut">คะแนนของฉัน</div>
       <div className="row" style={{ marginTop: 14 }}><button className="btn g" onClick={() => setM('scan')}>📷 โอนคะแนน</button><button className="btn sec g" onClick={() => setM('qr')}>⬇️ รับคะแนน</button></div>
       <button className="btn sec sm" style={{ marginTop: 10 }} onClick={() => setM('edit')}>✏️ แก้ไขชื่อ / รูป</button></div>

@@ -7,11 +7,13 @@ import { useMe } from '@/lib/auth';
 import { call } from '@/lib/api';
 import { useUsers, useHist } from '@/lib/hooks';
 import AuthForm from '@/components/AuthForm';
+import Logo from '@/components/Logo';
 import { Avatar, Modal, History } from '@/components/Bits';
 
 export default function Admin() {
-  const { u, me } = useMe();
-  if (u === undefined || (u && !me)) return <p className="c">กำลังโหลด…</p>;
+  const { u, me, err } = useMe();
+  if (u === undefined) return <p className="c">กำลังโหลด…</p>;
+  if (u && !me) return err ? <div className="wrap c"><p className="out">เชื่อมฐานข้อมูลไม่ได้: {err}</p><p className="mut">ตรวจว่าสร้าง Firestore และ Publish rules แล้ว</p><button className="btn sec" onClick={() => signOut(auth)}>ออกจากระบบ</button></div> : <p className="c">กำลังโหลด…</p>;
   if (!u) return <AuthForm adminOnly />;
   if (me.role !== 'admin') return <div className="wrap c"><p>บัญชีนี้ไม่มีสิทธิ์แอดมิน</p><button className="btn sec" onClick={() => signOut(auth)}>ออกจากระบบ</button></div>;
   return <Panel />;
@@ -20,7 +22,7 @@ function Panel() {
   const users = useUsers(), [rw, setRw] = useState([]), [pl, setPl] = useState(null), [ed, setEd] = useState(null);
   useEffect(() => onSnapshot(query(collection(db, 'rewards'), orderBy('cost')), (s) => setRw(s.docs.map((d) => ({ id: d.id, ...d.data() })))), []);
   return <div className="wrap wide">
-    <div className="row"><h1 className="g">🛠️ Points Arena Admin</h1><button className="btn sec sm" onClick={() => signOut(auth)}>ออกจากระบบ</button></div>
+    <div className="row"><div className="g row"><Logo size={36} /><h1 style={{ margin: 0 }}>Points Arena Admin</h1></div><button className="btn sec sm" onClick={() => signOut(auth)}>ออกจากระบบ</button></div>
     <h3>ผู้เล่น ({users.length})</h3>
     <div className="card" style={{ overflowX: 'auto' }}><table><thead><tr><th>#</th><th>ผู้เล่น</th><th>คะแนน</th><th /></tr></thead><tbody>
       {users.map((x, i) => <tr key={x.id}><td>{i + 1}</td><td><div className="row"><Avatar u={x} s={32} />{x.name}</div></td><td><b>{x.points.toLocaleString()}</b></td>
